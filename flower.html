@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="icon" href="img/flowers.png" type="image/x-icon" />
+    <title>Para Kathys</title>
+    
+    <style>
+      /* --- FONDO: Cielo nocturno azul oscuro con estrellas --- */
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100vh;
+        background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+        overflow: hidden;
+      }
+
+      /* Estrellas estáticas en el fondo */
+      .night-sky {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        background: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+                    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+                    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px);
+        background-size: 550px 550px, 350px 350px, 250px 250px;
+        opacity: 0.5;
+      }
+
+      .flowers {
+        position: absolute !important;
+        left: 50% !important;
+        top: 65vh !important; 
+        transform: translate(-50%, -50%) !important;
+        z-index: 10;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .flower__leaf {
+        background-image: linear-gradient(to top, #ff00ff, #ff66ff) !important;
+      }
+
+      #lyrics {
+        position: fixed;
+        top: 12%;
+        width: 100%;
+        text-align: center;
+        color: #ffffff;
+        font-size: 26px;
+        font-weight: bold;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        z-index: 150;
+        pointer-events: none;
+        text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 40px #ff00ff, 0 0 60px #ff66ff;
+        letter-spacing: 2px;
+        transition: all 0.5s ease;
+      }
+
+      .titulo {
+        position: fixed;
+        bottom: 120px;
+        width: 90%;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+        color: #ffffff;
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 19px;
+        font-weight: 600;
+        text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff66ff, 0 0 40px #ff00ff;
+        z-index: 20;
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      .visualizer-container {
+        position: fixed;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: flex-end;
+        gap: 4px;
+        height: 40px;
+        z-index: 100;
+        opacity: 0.8;
+      }
+      .bar {
+        width: 4px;
+        height: 5px;
+        background: linear-gradient(to top, #ff00ff, #ffb3ff);
+        border-radius: 2px;
+        box-shadow: 0 0 8px #ff00ff;
+      }
+      .playing .bar { animation: bounce 0.6s ease-in-out infinite alternate; }
+      .playing .bar:nth-child(1) { animation-delay: 0.1s; }
+      .playing .bar:nth-child(2) { animation-delay: 0.4s; }
+      .playing .bar:nth-child(3) { animation-delay: 0.2s; }
+      .playing .bar:nth-child(4) { animation-delay: 0.5s; }
+      .playing .bar:nth-child(5) { animation-delay: 0.3s; }
+
+      @keyframes bounce { 0% { height: 5px; } 100% { height: 35px; } }
+
+      .heart-bg {
+        position: fixed;
+        bottom: -50px;
+        width: 12px;
+        height: 12px;
+        background-image: linear-gradient(to top, #ff00ff, #ffaaff);
+        transform: rotate(-45deg);
+        animation: floatUp linear infinite;
+        z-index: 5;
+        opacity: 0.35;
+        box-shadow: 0 0 8px rgba(255, 0, 255, 0.6);
+      }
+      .heart-bg::before, .heart-bg::after {
+        content: ''; position: absolute; width: 12px; height: 12px;
+        background-image: linear-gradient(to top, #ff00ff, #ffaaff); border-radius: 50%;
+      }
+      .heart-bg::before { top: -6px; left: 0; }
+      .heart-bg::after { top: 0; left: 6px; }
+
+      @keyframes floatUp {
+        0% { transform: translateY(0) rotate(-45deg) scale(0.7); opacity: 0; }
+        15% { opacity: 0.4; }
+        85% { opacity: 0.4; }
+        100% { transform: translateY(-115vh) rotate(-45deg) scale(1.2); opacity: 0; }
+      }
+
+      .glass-btn {
+        position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+        padding: 10px 22px; font-size: 13px; font-weight: bold; color: #ffffff;
+        background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 25px;
+        box-shadow: 0 4px 20px rgba(255, 0, 255, 0.15); cursor: pointer; z-index: 200;
+      }
+
+      .falling-star {
+        position: fixed; top: -30px; color: #ffd700;
+        text-shadow: 0 0 8px #ffea00; z-index: 120; pointer-events: none;
+        animation: fallDown linear forwards;
+      }
+      @keyframes fallDown { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(110vh) rotate(360deg); } }
+    </style>
+  </head>
+  <body>
+    <div class="night-sky"></div>
+    <audio id="audio" src="mus/1.mp3" loop></audio>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        for (let i = 0; i < 50; i++) {
+          let heart = document.createElement('div');
+          heart.classList.add('heart-bg');
+          heart.style.left = Math.random() * 100 + 'vw';
+          heart.style.animationDuration = (Math.random() * 6 + 6) + 's'; 
+          heart.style.animationDelay = (Math.random() * 8) + 's';
+          document.body.appendChild(heart);
+        }
+      });
+
+      function iniciarYEstrellas() {
+        const audio = document.getElementById("audio");
+        const visualizer = document.getElementById("visualizer");
+        audio.play();
+        visualizer.classList.add('playing');
+
+        const starTypes = ['⭐', '✨', '🌟', '💫'];
+        for (let i = 0; i < 45; i++) {
+          setTimeout(() => {
+            let star = document.createElement('div');
+            star.classList.add('falling-star');
+            star.innerHTML = starTypes[Math.floor(Math.random() * starTypes.length)];
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.animationDuration = (Math.random() * 3 + 2.5) + 's';
+            document.body.appendChild(star);
+            setTimeout(() => { star.remove(); }, 5000);
+          }, i * 70);
+        }
+      }
+    </script>
+
+    <div id="lyrics">✨ Para Kathys con amor ✨</div>
+    <div class="visualizer-container" id="visualizer">
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    </div>
+  
+    <div class="flowers">
+      <div class="flower flower--1">
+        <div class="flower__leafs flower__leafs--1"><div class="flower__leaf flower__leaf--1"></div><div class="flower__leaf flower__leaf--2"></div><div class="flower__leaf flower__leaf--3"></div><div class="flower__leaf flower__leaf--4"></div><div class="flower__white-circle"></div><div class="flower__light flower__light--1"></div><div class="flower__light flower__light--2"></div><div class="flower__light flower__light--3"></div><div class="flower__light flower__light--4"></div><div class="flower__light flower__light--5"></div><div class="flower__light flower__light--6"></div><div class="flower__light flower__light--7"></div><div class="flower__light flower__light--8"></div></div>
+        <div class="flower__line"><div class="flower__line__leaf flower__line__leaf--1"></div><div class="flower__line__leaf flower__line__leaf--2"></div><div class="flower__line__leaf flower__line__leaf--3"></div><div class="flower__line__leaf flower__line__leaf--4"></div><div class="flower__line__leaf flower__line__leaf--5"></div><div class="flower__line__leaf flower__line__leaf--6"></div></div>
+      </div>
+      <div class="flower flower--2">
+        <div class="flower__leafs flower__leafs--2"><div class="flower__leaf flower__leaf--1"></div><div class="flower__leaf flower__leaf--2"></div><div class="flower__leaf flower__leaf--3"></div><div class="flower__leaf flower__leaf--4"></div><div class="flower__white-circle"></div><div class="flower__light flower__light--1"></div><div class="flower__light flower__light--2"></div><div class="flower__light flower__light--3"></div><div class="flower__light flower__light--4"></div><div class="flower__light flower__light--5"></div><div class="flower__light flower__light--6"></div><div class="flower__light flower__light--7"></div><div class="flower__light flower__light--8"></div></div>
+        <div class="flower__line"><div class="flower__line__leaf flower__line__leaf--1"></div><div class="flower__line__leaf flower__line__leaf--2"></div><div class="flower__line__leaf flower__line__leaf--3"></div><div class="flower__line__leaf flower__line__leaf--4"></div></div>
+      </div>
+      <div class="flower flower--3">
+        <div class="flower__leafs flower__leafs--3"><div class="flower__leaf flower__leaf--1"></div><div class="flower__leaf flower__leaf--2"></div><div class="flower__leaf flower__leaf--3"></div><div class="flower__leaf flower__leaf--4"></div><div class="flower__white-circle"></div><div class="flower__light flower__light--1"></div><div class="flower__light flower__light--2"></div><div class="flower__light flower__light--3"></div><div class="flower__light flower__light--4"></div><div class="flower__light flower__light--5"></div><div class="flower__light flower__light--6"></div><div class="flower__light flower__light--7"></div><div class="flower__light flower__light--8"></div></div>
+        <div class="flower__line"><div class="flower__line__leaf flower__line__leaf--1"></div><div class="flower__line__leaf flower__line__leaf--2"></div><div class="flower__line__leaf flower__line__leaf--3"></div><div class="flower__line__leaf flower__line__leaf--4"></div></div>
+      </div>
+      <div class="grow-ans" style="--d: 1.2s"><div class="flower__g-long"><div class="flower__g-long__top"></div><div class="flower__g-long__bottom"></div></div></div>
+      <div class="growing-grass"><div class="flower__grass flower__grass--1"><div class="flower__grass--top"></div><div class="flower__grass--bottom"></div><div class="flower__grass__leaf flower__grass__leaf--1"></div><div class="flower__grass__leaf flower__grass__leaf--2"></div><div class="flower__grass__leaf flower__grass__leaf--3"></div><div class="flower__grass__leaf flower__grass__leaf--4"></div><div class="flower__grass__leaf flower__grass__leaf--5"></div><div class="flower__grass__leaf flower__grass__leaf--6"></div><div class="flower__grass__leaf flower__grass__leaf--7"></div><div class="flower__grass__leaf flower__grass__leaf--8"></div><div class="flower__grass__overlay"></div></div></div>
+      <div class="growing-grass"><div class="flower__grass flower__grass--2"><div class="flower__grass--top"></div><div class="flower__grass--bottom"></div><div class="flower__grass__leaf flower__grass__leaf--1"></div><div class="flower__grass__leaf flower__grass__leaf--2"></div><div class="flower__grass__leaf flower__grass__leaf--3"></div><div class="flower__grass__leaf flower__grass__leaf--4"></div><div class="flower__grass__leaf flower__grass__leaf--5"></div><div class="flower__grass__leaf flower__grass__leaf--6"></div><div class="flower__grass__leaf flower__grass__leaf--7"></div><div class="flower__grass__leaf flower__grass__leaf--8"></div><div class="flower__grass__overlay"></div></div></div>
+      <div class="grow-ans" style="--d: 2.4s"><div class="flower__g-right flower__g-right--1"><div class="leaf"></div></div></div>
+      <div class="grow-ans" style="--d: 2.8s"><div class="flower__g-right flower__g-right--2"><div class="leaf"></div></div></div>
+      <div class="grow-ans" style="--d: 2.8s"><div class="flower__g-front"><div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--1"><div class="flower__g-front__leaf"></div></div><div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--2"><div class="flower__g-front__leaf"></div></div><div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--3"><div class="flower__g-front__leaf"></div></div><div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--4"><div class="flower__g-front__leaf"></div></div><div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--5"><div class="flower__g-front__leaf"></div></div><div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--6"><div class="flower__g-front__leaf"></div></div><div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--7"><div class="flower__g-front__leaf"></div></div><div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--8"><div class="flower__g-front__leaf"></div></div><div class="flower__g-front__line"></div></div></div>
+      <div class="grow-ans" style="--d: 3.2s"><div class="flower__g-fr"><div class="leaf"></div><div class="flower__g-fr__leaf flower__g-fr__leaf--1"></div><div class="flower__g-fr__leaf flower__g-fr__leaf--2"></div><div class="flower__g-fr__leaf flower__g-fr__leaf--3"></div><div class="flower__g-fr__leaf flower__g-fr__leaf--4"></div><div class="flower__g-fr__leaf flower__g-fr__leaf--5"></div><div class="flower__g-fr__leaf flower__g-fr__leaf--6"></div><div class="flower__g-fr__leaf flower__g-fr__leaf--7"></div><div class="flower__g-fr__leaf flower__g-fr__leaf--8"></div></div></div>
+      <div class="long-g long-g--0"><div class="grow-ans" style="--d: 3s"><div class="leaf leaf--0"></div></div><div class="grow-ans" style="--d: 2.2s"><div class="leaf leaf--1"></div></div><div class="grow-ans" style="--d: 3.4s"><div class="leaf leaf--2"></div></div><div class="grow-ans" style="--d: 3.6s"><div class="leaf leaf--3"></div></div></div>
+      <div class="long-g long-g--1"><div class="grow-ans" style="--d: 3.6s"><div class="leaf leaf--0"></div></div><div class="grow-ans" style="--d: 3.8s"><div class="leaf leaf--1"></div></div><div class="grow-ans" style="--d: 4s"><div class="leaf leaf--2"></div></div><div class="grow-ans" style="--d: 4.2s"><div class="leaf leaf--3"></div></div></div>
+      <div class="long-g long-g--2"><div class="grow-ans" style="--d: 4s"><div class="leaf leaf--0"></div></div><div class="grow-ans" style="--d: 4.2s"><div class="leaf leaf--1"></div></div><div class="grow-ans" style="--d: 4.4s"><div class="leaf leaf--2"></div></div><div class="grow-ans" style="--d: 4.6s"><div class="leaf leaf--3"></div></div></div>
+      <div class="long-g long-g--3"><div class="grow-ans" style="--d: 4s"><div class="leaf leaf--0"></div></div><div class="grow-ans" style="--d: 4.2s"><div class="leaf leaf--1"></div></div><div class="grow-ans" style="--d: 3s"><div class="leaf leaf--2"></div></div><div class="grow-ans" style="--d: 3.6s"><div class="leaf leaf--3"></div></div></div>
+      <div class="long-g long-g--4"><div class="grow-ans" style="--d: 4s"><div class="leaf leaf--0"></div></div><div class="grow-ans" style="--d: 4.2s"><div class="leaf leaf--1"></div></div><div class="grow-ans" style="--d: 3s"><div class="leaf leaf--2"></div></div><div class="grow-ans" style="--d: 3.6s"><div class="leaf leaf--3"></div></div></div>
+      <div class="long-g long-g--5"><div class="grow-ans" style="--d: 4s"><div class="leaf leaf--0"></div></div><div class="grow-ans" style="--d: 4.2s"><div class="leaf leaf--1"></div></div><div class="grow-ans" style="--d: 3s"><div class="leaf leaf--2"></div></div><div class="grow-ans" style="--d: 3.6s"><div class="leaf leaf--3"></div></div></div>
+      <div class="long-g long-g--6"><div class="grow-ans" style="--d: 4.2s"><div class="leaf leaf--0"></div></div><div class="grow-ans" style="--d: 4.4s"><div class="leaf leaf--1"></div></div><div class="grow-ans" style="--d: 4.6s"><div class="leaf leaf--2"></div></div><div class="grow-ans" style="--d: 4.8s"><div class="leaf leaf--3"></div></div></div>
+      <div class="long-g long-g--7"><div class="grow-ans" style="--d: 3s"><div class="leaf leaf--0"></div></div><div class="grow-ans" style="--d: 3.2s"><div class="leaf leaf--1"></div></div><div class="grow-ans" style="--d: 3.5s"><div class="leaf leaf--2"></div></div><div class="grow-ans" style="--d: 3.6s"><div class="leaf leaf--3"></div></div></div>
+    </div>
+
+    <h2 class="titulo">te dedico este nuevo código a ti Kathys <br> me muero de ganas por conocerte .</h2>
+
+    <button class="glass-btn" onclick="iniciarYEstrellas()">Presiona aquí</button>
+
+    <script src="anim.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
